@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="init" name="sepel-common5">
+    <target name="init">
+        <tstamp prefix="timestamp"/>
+        <property name="today" value="${timestamp.DSTAMP}"/>
+        <property name="srcdir" value="${basedir}/src/main/java"/>
+        <property name="libdir" value="${basedir}/lib"/>
+        <property name="resourcedir" value="/opt/applicazioni/SEPEL/SEPEL-common5/src/main/resources"/>
+        <property name="classdir" value="${basedir}/classes"/>
+        <property name="jarfile" value="${basedir}/sepel-common5-1.0.jar"/>
+        
+        <path id="libs"> 
+            <pathelement location="${java.class.path}"/>
+            <pathelement location="${classdir}"/>
+
+            <fileset dir="${libdir}">
+                <include name="**/*.jar"/>
+            </fileset>
+            <pathelement location="${srcdir}"/>
+        </path>    
+        <pathconvert property="winclasspath" refid="libs" targetOS="windows"/>
+        <pathconvert property="unixclasspath" refid="libs" targetOS="unix"/>
+    </target>
+
+    <target depends="init" name="clean">
+        <delete file="${jarfile}"/>
+       
+        <delete>
+            <fileset dir="${classdir}">
+                <include name="**/*~"/>
+                <include name="**/*.class"/>
+            </fileset>
+        </delete>
+        
+        <delete>
+            <fileset dir="${libdir}">
+                <include name="**/*~"/>
+                <include name="**/*.jar"/>
+                <include name="**/*.pom"/>
+            </fileset>
+        </delete>
+    </target>
+    
+    <target name="maven clean install">
+        <property name="mvn.executable" value="/usr/bin/mvn" />
+        <exec executable="${mvn.executable}">
+            <arg line="clean install" />
+        </exec>
+    </target>
+    
+    <target name="maven publish locally" depends="jar.common5">
+        <echo message="${jarfile}"/>
+        <property name="mvn.executable" value="/usr/bin/mvn" />
+        <exec executable="${mvn.executable}">
+            <arg line="install:install-file -Dfile=${jarfile} -DgroupId=it.sepel.common5 -DartifactId=sepel-common5 -Dversion=1.0 -Dpackaging=jar" />
+        </exec>
+    </target>
+
+    <target depends="init" name="compile">
+        <javac classpathref="libs" debug="true" deprecation="false" destdir="${classdir}" includes="it/**" srcdir="${srcdir}"></javac>
+    </target>
+    
+    <target depends="compile" name="jar.common5">
+        <jar basedir="${basedir}/classes" compress="true" includes="**" jarfile="${jarfile}">
+            <exclude name="**/*.java"/>
+            <exclude name="**/*.jar"/>
+            <exclude name="**/*.form"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+            </manifest>
+            <zipfileset dir="${resourcedir}/maps" prefix="it/sepel/common5/maps"/>
+            <zipfileset file="${resourcedir}/context.xml" prefix="it/sepel/common5"/>
+        </jar>
+    </target>
+</project>
