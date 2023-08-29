@@ -1,4 +1,4 @@
-package it.sepel.mailer.test;
+package it.sepel.mailer.test.x;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

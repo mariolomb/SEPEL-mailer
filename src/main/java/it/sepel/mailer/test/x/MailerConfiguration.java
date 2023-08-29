@@ -1,4 +1,4 @@
-package it.sepel.mailer.test;
+package it.sepel.mailer.test.x;
 
 import it.sepel.mailer.logic.Mailer;
 import it.sepel.mailer.logic.SendMailExecutor;
